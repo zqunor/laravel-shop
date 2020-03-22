@@ -1,8 +1,12 @@
 /node_modules
 /public/hot
 /public/storage
+/public/mix-manifest.json
+/public/js
+/public/css
 /storage/*.key
 /vendor
+.idea/*
 .env
 .env.backup
 .phpunit.result.cache
