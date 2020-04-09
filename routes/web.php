@@ -11,7 +11,8 @@
 |
 */
 
-Route::get('/', 'PagesController@root')->name('root');
+Route::redirect('/', '/products')->name('root');
+Route::get('products', 'ProductsController@index')->name('products.index');
 
 // 参数verify：启用与邮箱验证相关的路由
 Auth::routes(['verify' => true]);
