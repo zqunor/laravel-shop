@@ -16,7 +16,13 @@
               <div class="sales_and_reviews">
                 <div class="sold_count">累计销量 <span class="count">{{ $product->sold_count }}</span></div>
                 <div class="review_count">累计评价 <span class="count">{{ $product->review_count }}</span></div>
-                <div class="rating" title="评分 {{ $product->rating }}">评分 <span class="count">{{ str_repeat('★', floor($product->rating)) }}{{ str_repeat('☆', 5 - floor($product->rating)) }}</span></div>
+                <div class="rating" title="评分 {{ $product->rating }}">
+                  评分
+                  <span class="count">
+                    {{ str_repeat('★', floor($product->rating)) }}
+                    {{ str_repeat('☆', 5 - floor($product->rating)) }}
+                  </span>
+                </div>
               </div>
               <div class="skus">
                 <label>选择</label>
@@ -99,6 +105,8 @@
           }
         })
       });
+
+      // 取消收藏
       $('.btn-disfavor').click(function () {
         axios.delete('{{ route('products.disfavor', ['product' => $product->id]) }}')
         .then(function () {
@@ -107,6 +115,41 @@
             location.reload();
           });
         });
+      });
+
+      // 加入购物车按钮点击事件
+      $('.btn-add-to-cart').click(function () {
+
+        // 请求加入购物车接口
+        axios.post('{{ route('cart.add') }}', {
+          sku_id: $('label.active input[name=skus]').val(),
+          amount: $('.cart_amount input').val(),
+        })
+        .then(function () { // 请求成功执行此回调
+          swal('加入购物车成功', '', 'success');
+        }, function (error) { // 请求失败执行此回调
+          if (error.response.status === 401) {
+
+            // http 状态码为 401 代表用户未登陆
+            swal('请先登录', '', 'error');
+
+          } else if (error.response.status === 422) {
+
+            // http 状态码为 422 代表用户输入校验失败
+            var html = '<div>';
+            _.each(error.response.data.errors, function (errors) {
+              _.each(errors, function (error) {
+                html += error+'<br>';
+              })
+            });
+            html += '</div>';
+            swal({content: $(html)[0], icon: 'error'})
+          } else {
+
+            // 其他情况应该是系统挂了
+            swal('系统错误', '', 'error');
+          }
+        })
       });
 
     });
