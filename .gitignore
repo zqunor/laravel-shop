@@ -1,10 +1,12 @@
-.idea/
+.idea
+*/workspace.xml
 /node_modules
 /public/hot
 /public/storage
 /public/mix-manifest.json
 /public/js
 /public/css
+/public/fonts
 /storage/*.key
 /vendor
 .env
