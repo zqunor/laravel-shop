@@ -58,4 +58,18 @@ class OrderRequest extends FormRequest
             'items.*.amount' => ['required', 'integer', 'min:1'],
         ];
     }
+
+    public function attributes()
+    {
+        return [
+            'items.*.amount' => '商品数量',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'items.*.amount.min' => '商品数量必须大于等于1',
+        ];
+    }
 }
