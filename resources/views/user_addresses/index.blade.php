@@ -42,7 +42,7 @@
   </div>
 @endsection
 
-@section('scriptsAfterJs')UserAddressPolicy
+@section('scriptsAfterJs')
   <script>
     $(document).ready(function() {
       // 删除按钮点击事件
