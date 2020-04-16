@@ -9,7 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-// 代表这个类需要被放到队列中执行，而不是触发时立即执行
+// 代表这个类需要被放到队列中执行，而不是触发时立即执行 (修改队列任务的逻辑后，需要重启队列生效，或者执行php artisan queue:restart)
 class CloseOrder implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
