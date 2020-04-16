@@ -158,7 +158,10 @@
         // 下单
         axios.post('{{ route('orders.store') }}', req)
         .then(function (response) {
-          swal('订单提交成功', '', 'success');
+          swal('订单提交成功', '', 'success')
+          .then(() => {
+            location.herf = '/orders/' + response.data.id;
+          });
         }, function (error) {
 
           console.log(error);
