@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\InvalidRequestException;
 use App\Models\Order;
 use Carbon\Carbon;
+use Endroid\QrCode\QrCode;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -73,6 +74,55 @@ class PaymentController extends Controller
         ]);
 
         return app('alipay')->success();
+    }
+
+    public function payByWechat(Order $order, Request $request)
+    {
+        // 判断订单是否属于当前用户
+        $this->authorize('own', $order);
+
+        // 订单已支付或已关闭
+        if ($order->paid_at || $order->closed) {
+            throw new InvalidRequestException('订单状态不正确');
+        }
+
+        $wechatOrder = app('wechat_pay')->scan([
+            'out_trade_no' => $order->no, // 订单编号
+            'total_amount' => $order->total_amount * 100, // 订单金额，单位分
+            'body' => '支付 Laravel Shop 订单：' . $order->no, // 订单标题
+        ]);
+
+        // 把要转换的字符串作为 QrCode 的构造函数参数
+        $qrCode = new QrCode($wechatOrder->code_url);
+
+        // 将生成的二维码图片数据以字符串形式输出，并带上相应的响应类型
+        return response($qrCode->writeString(), 200, ['Content-Type' => $qrCode->getContentType()]);
+    }
+
+    // 服务器回调页面
+    public function wechatNotify()
+    {
+        $data = app('wechat_pay')->verify();
+
+        // $data->out_trade_no 拿到订单流水号，并在数据库中查询
+        $order = Order::where('no', $data->out_trade_no)->first();
+        // 正常来说不太可能出现支付了一笔不存在的订单，这个判断只是加强系统健壮性。
+        if (!$order) {
+        return 'fail';
+        }
+        // 如果这笔订单的状态已经是已支付
+        if ($order->paid_at) {
+            // 告知微信支付此订单已处理
+            return app('wechat_pay')->success();
+        }
+
+        $order->update([
+            'paid_at'        => Carbon::now(), // 支付时间
+            'payment_method' => 'wechat', // 支付方式
+            'payment_no'     => $data->transaction_id, // 微信支付订单号
+        ]);
+
+        return app('wechat_pay')->success();
     }
     
 }

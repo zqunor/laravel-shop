@@ -36,6 +36,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton('wechat_pay', function () {
             $config = config('pay.wechat');
+            // 回调地址必须是完整的带有域名的 URL
+            //http://requestbin.net/r/1gojlq41
+            $config['notify_url'] = 'http://requestbin.net/r/1gojlq41';
+            // $config['notify_url'] = route('payment.wechat.notify');
             if (app()->environment() !== 'production') {
                 $config['log']['level'] = Logger::DEBUG;
             } else {
