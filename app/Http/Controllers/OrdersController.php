@@ -34,4 +34,23 @@ class OrdersController extends Controller
         $this->authorize('own', $order);
         return view('orders.show', ['order' => $order->load(['items.productSku', 'items.product'])]);
     }
+
+    public function received(Order $order, Request $request)
+    {
+        // 权限校验
+        $this->authorize('own', $order);
+
+        if ($order->ship_status !== Order::SHIP_STATUS_DELIVERED) {
+            throw new InvalidRequestException('发货状态不正确');
+        }
+
+        // 更新发货状态为已收到
+        $order->update(['ship_status' => Order::SHIP_STATUS_RECEIVED]);
+
+        // 返回原页面（表单提交的返回值）
+        // return redirect()->back();
+
+        // 返回订单信息 (ajax请求返回值)
+        return $order;
+    }
 }
