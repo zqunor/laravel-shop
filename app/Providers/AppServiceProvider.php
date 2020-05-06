@@ -19,9 +19,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('alipay', function () {
             $config = config('pay.alipay');
             // 回调地址必须是完整的带有域名的 URL
-            //http://requestbin.net/r/1gojlq41
-            $config['notify_url'] = 'http://requestbin.net/r/1gojlq41';
-            // $config['notify_url'] = route('payment.alipay.notify');
+            $config['notify_url'] = route('payment.alipay.notify');
             $config['return_url'] = route('payment.alipay.return');
             // 判断当前项目运行环境是否为线上环境
             if (app()->environment() !== 'production') {
@@ -37,9 +35,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('wechat_pay', function () {
             $config = config('pay.wechat');
             // 回调地址必须是完整的带有域名的 URL
-            //http://requestbin.net/r/1gojlq41
-            $config['notify_url'] = 'http://requestbin.net/r/1gojlq41';
-            // $config['notify_url'] = route('payment.wechat.notify');
+            $config['notify_url'] = route('payment.wechat.notify');
             if (app()->environment() !== 'production') {
                 $config['log']['level'] = Logger::DEBUG;
             } else {
