@@ -13,8 +13,9 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
+        // 不用记录到日志的异常
         InvalidRequestException::class,
+        CouponCodeUnavailableException::class,
     ];
 
     /**

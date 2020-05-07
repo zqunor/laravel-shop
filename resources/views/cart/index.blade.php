@@ -146,6 +146,7 @@
           address_id: order_form.find('select[name=address]').val(),
           items: [],
           remark: order_form.find('textarea[name=remark]').val(),
+          coupon_code: $('input[name=coupon_code]').val(), // 从优惠码输入框中获取优惠码
         };
         // 遍历 <table> 标签内所有带有 data-id 属性的 <tr> 标签，也就是每一个购物车中的商品 SKU
         $('table tr[data-id]').each(function () {
@@ -171,9 +172,11 @@
         // 下单
         axios.post('{{ route('orders.store') }}', req)
         .then(function (response) {
+          console.log(response);
           swal('订单提交成功', '', 'success')
           .then(() => {
-            location.herf = '/orders/' + response.data.id;
+            location.href = '/orders/' + response.data.id;
+            return false;
           });
         }, function (error) {
 
