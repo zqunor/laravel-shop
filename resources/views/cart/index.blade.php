@@ -172,7 +172,6 @@
         // 下单
         axios.post('{{ route('orders.store') }}', req)
         .then(function (response) {
-          console.log(response);
           swal('订单提交成功', '', 'success')
           .then(() => {
             location.href = '/orders/' + response.data.id;
@@ -191,8 +190,10 @@
             });
             html += '</div>';
             swal({content: $(html)[0], icon: 'error'})
+          } else if (error.response.status === 403) {
+            swal(error.response.data.msg, '', 'error');
           } else {
-            // 其他情况应该是系统挂了
+            CloseOrder // 其他情况应该是系统挂了
             swal('系统错误', '', 'error');
           }
         });
